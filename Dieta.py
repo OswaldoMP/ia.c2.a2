@@ -25,6 +25,7 @@ class Dieta:
         self.TOTAL_GANANCIA = 0
         self.PORCENTAJE = int((self.TAMANO_POBLACION*95)/100)
         self.FLAG = False
+        self.LISTA_GRAFICAR = []
         pass
 
     def main(self):
@@ -32,13 +33,15 @@ class Dieta:
         print('TMB => ',self.TMB)
 
         while True:
+            print('TMB => ',self.TMB)
+            print('IMC =>', self.IMC)
             self.createPoblacion()
             # print('iniico => ',self.POBLACION)
             valor = self.funcionAptitud(self.POBLACION)
             #ordenar poblacion por Aptitud
             self.POBLACION.sort(key=lambda  poblacion: poblacion[11], reverse=True)
-            # print('Poblacion Inital => ', self.POBLACION)
-            # print('fin__')
+            print('Poblacion Inital => ', self.POBLACION)
+            print('fin__')
             if self.POBLACION[0][11] > 0:
                 break
             else:
@@ -46,9 +49,11 @@ class Dieta:
         #--------------------------
         x = 0
         while self.FLAG != True:
+            self.LISTA_GRAFICAR.clear()
             print()
             print('d__',self.POBLACION)
             self.funcionAptitud(self.POBLACION)
+            # self.grafica(self.LISTA_GRAFICAR,x)
             INDIVIDUOS_PADRE = self.seleccion()
             # print()
             # print('PADRE => ',INDIVIDUOS_PADRE)
@@ -68,9 +73,24 @@ class Dieta:
             POBLACION_NEW.sort(key=lambda POBLACION_NEW: POBLACION_NEW[11], reverse=True)
             # print()
             self.update(POBLACION_NEW)
+            self.grafica(self.LISTA_GRAFICAR,x)
             self.FLAG = self.condicionParo()
             x = x +1
             print('---------------------',x,'------------------------------')
+        pass
+
+    def grafica(self,listaValores,x):
+        print(listaValores)
+        listaValores.sort()
+        plt.plot(listaValores, marker='x', linestyle=':', color='r', label = f'Dieta {x+1} kc = {listaValores[0]} ')
+        # plt.plot(lista2, marker='*', linestyle='-', color='g', label = "Febrero")
+        # plt.plot(lista3, marker='o', linestyle='--', color='r', label = "Marzo")
+        plt.xlabel('Individuos')
+        plt.ylabel('KiloCalorías')
+        plt.title('Dieta')
+        plt.legend(loc="upper left")
+        plt.savefig(f'ImageGrafica-VALOR {x}')
+        self.LISTA_GRAFICAR.clear()
         pass
 
     def condicionParo(self):
@@ -88,6 +108,7 @@ class Dieta:
     def update(self,POBLACION_NEW):
         for i in range(len(self.POBLACION)):
             self.POBLACION[i] = POBLACION_NEW[i]
+            self.LISTA_GRAFICAR.append(self.POBLACION[i][11])
             # self.POBLACION[i].pop()
         pass
 
@@ -112,33 +133,34 @@ class Dieta:
                 sumaTotalLipidos = sumaTotalLipidos + POBLACION_NEW[i][j]
 
             self.setAptitud(sumaTotalCarbohidratos,sumaTotalProteinas,sumaTotalLipidos)
-
+            print('APTITUD ===>',self.APTITUD)
             #A cada individuo i se le asigna su valor de APTITUD
             POBLACION_NEW[i].extend([self.APTITUD])
         POBLACION_NEW = self.restricciones(POBLACION_NEW)
         for i in range(len(POBLACION_NEW)):
             self.TOTAL_GANANCIA = self.TOTAL_GANANCIA + POBLACION_NEW[i][11]
+            # self.LISTA_GRAFICAR.append(POBLACION_NEW[i][11])
         return POBLACION_NEW
 
     def restricciones(self,POBLACION_NEW):
         if self.SOBRE_PESO == 1:
             print('Sobre Peso')
             for i in range(len(POBLACION_NEW)):
-                if POBLACION_NEW[i][11] > 1800 and POBLACION_NEW[i][11] <= 2000:
+                if POBLACION_NEW[i][11] <= 2000:
                     pass
                 else:
                     POBLACION_NEW[i][11] = 0
         elif self.SOBRE_PESO == -1:
             print('Peso Bajo')
             for i in range(len(POBLACION_NEW)):
-                if POBLACION_NEW[i][11] > 2000 and POBLACION_NEW[i][11] <= 2300:
+                if  POBLACION_NEW[i][11] <= 2300:
                     pass
                 else:
                     POBLACION_NEW[i][11] = 0
         else:
             print('Peso Normal')
             for i in range(len(POBLACION_NEW)):
-                if POBLACION_NEW[i][11] > 2000 and POBLACION_NEW[i][11] <= self.TMB:
+                if  POBLACION_NEW[i][11] <= self.TMB:
                     pass
                 else:
                     POBLACION_NEW[i][11] = 0
@@ -243,6 +265,7 @@ class Dieta:
 
     def calcularSobrePeso(self):
         #sobre peso > 27, peso bajo < 18 y peso normal >18 y < 25
+        print(self.IMC)
         if self.IMC < 18:
             sobrePeso = -1
             return sobrePeso

@@ -30,21 +30,6 @@ class Main(QtWidgets.QMainWindow,IForm):
             SEXO = 1
             
         print(EJERCICIO,SEXO)
-        
-        # pesoMin = int(self.textPesoMin.text())
-        # # print(self.textTMax.text(),"tmax")
-        # pesoMax = int(self.textPesoMax.text())
-        # # print(self.text0.text(),"t0")
-        # volumenMin = int(self.textVolumenMin.text())
-        # volumenMax = int(self.textVolumenMax.text())
-        # gananciaMin = int(self.textGananciaMin.text())
-        # ganancianMax = int(self.textGananciaMax.text())
-        # porcentaje = int(self.textCondicion.text())
-        # print(self.textcodP.text(),"cond")
-        #cruza = 1
-        # geneticos = Geneticos(k,n_max,m,t_max,t_inicial,porcentaje,cruza)
-        # geneticos.start()
-        # miKp = KnapsackTest(numeroElemento,15,R2,R1,porcentaje,pesoMin,pesoMax,volumenMin,volumenMax,gananciaMin,ganancianMax)
         miDieta = Dieta(PESO,ALTURA,EDAD,EJERCICIO,SEXO)
         miDieta.main()
         
